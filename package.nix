@@ -72,7 +72,7 @@ let
       xorg.libXrandr
       xdg-utils
       wxGTK31
-      gtk2
+      gtk3
       cairo
       pango
       librsvg

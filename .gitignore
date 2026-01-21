@@ -1,0 +1,4 @@
+result/
+*.deb
+*.bin
+test/
