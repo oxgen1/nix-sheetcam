@@ -46,7 +46,13 @@ let
     mkdir -p $out/bin
     mkdir -p $out/lib
     mkdir -p $out/share
-    cp -r usr/lib/ $out
+    # Keep the original directory structure
+    cp -r usr/lib/SheetCamTNG-dev $out/lib/
+    # Also symlink each .so into $out/lib/ directly so buildFHSEnv
+    # merges them into /lib/ on the default linker search path
+    for f in usr/lib/SheetCamTNG-dev/*.so*; do
+      ln -sf $out/lib/SheetCamTNG-dev/$(basename "$f") $out/lib/$(basename "$f")
+    done
     cp -r usr/bin $out
     cp -r usr/share/ $out
 
@@ -97,9 +103,8 @@ in stdenv.mkDerivation {
   buildInputs = [sheetcam-dist];
   phases = [ "installPhase" ];
   installPhase = ''
-
+    
   makeWrapper ${fhsEnv}/bin/${fhsEnv.pname} $out/bin/SheetCamTNG-dev-r \
-        --prefix LD_LIBRARY_PATH : "${lib.makeLibraryPath libs}:${sheetcam-dist}/lib/SheetCamTNG-dev:/usr/lib/SheetCamTNG-dev" \
         --set GDK_BACKEND x11
   '';
 }
